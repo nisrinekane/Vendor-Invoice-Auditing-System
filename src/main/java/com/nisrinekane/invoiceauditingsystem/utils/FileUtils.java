@@ -9,7 +9,9 @@ import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.pdfbox.Loader;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.springframework.stereotype.Component;
 
+@Component
 public class FileUtils {
     public static String readFileContent(Path path) throws IOException {
         String extension = getFileExtension(path.toString());
