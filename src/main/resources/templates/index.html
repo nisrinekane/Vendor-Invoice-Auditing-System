@@ -1,14 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>File Upload</title>
+    <title>Invoice Auditing System</title>
 </head>
 <body>
-<h1>Upload your file</h1>
-<form method="post" action="/upload" enctype="multipart/form-data">
-    <input type="file" name="file" accept=".pdf,.doc,.docx,.txt,.odt">
-    <button type="submit">Upload</button>
+
+<h1>Upload Invoice and Contract</h1>
+
+<form id="uploadForm" enctype="multipart/form-data">
+    <label for="invoice">Invoice:</label>
+    <input type="file" name="invoice" id="invoice" />
+    <br>
+    <label for="contract">Contract:</label>
+    <input type="file" name="contract" id="contract" />
+    <br>
+    <input type="button" value="Upload Files" onclick="uploadFiles()" />
 </form>
+
+<input type="button" value="Generate Report" onclick="generateReport()" />
+
+<script>
+    async function uploadFiles() {
+        const formData = new FormData();
+        formData.append('invoice', document.getElementById('invoice').files[0]);
+        formData.append('contract', document.getElementById('contract').files[0]);
+
+        const response = await fetch('/api/audit/upload', {
+            method: 'POST',
+            body: formData
+        });
+
+        if(response.ok) {
+            alert('Files uploaded');
+        } else {
+            alert('Error uploading files');
+        }
+    }
+
+    async function generateReport() {
+        const response = await fetch('/api/audit/generatePDF');
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        window.open(url, '_blank');
+    }
+</script>
+
 </body>
 </html>
