@@ -1,125 +1,94 @@
 package com.nisrinekane.invoiceauditingsystem.service;
 
-import opennlp.tools.namefind.NameFinderME;
-import opennlp.tools.namefind.TokenNameFinderModel;
-import opennlp.tools.sentdetect.SentenceDetectorME;
-import opennlp.tools.sentdetect.SentenceModel;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
+import opennlp.tools.namefind.*;
+import opennlp.tools.sentdetect.*;
 import opennlp.tools.tokenize.SimpleTokenizer;
 import opennlp.tools.util.Span;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.pdf.PdfWriter;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayInputStream;
+import javax.annotation.PostConstruct;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.nio.charset.StandardCharsets;
 
 @Service
 public class AuditService {
 
+    private SentenceDetectorME sentenceDetector;
+    private NameFinderME dateFinder;
+    private NameFinderME moneyFinder;
+    private NameFinderME percentageFinder;
+    private NameFinderME timeFinder;
+    private NameFinderME locationFinder;
+    private NameFinderME personFinder;
+
     private byte[] pdfReport;
 
-    public Future<String> auditInvoiceAgainstContract(byte[] invoiceBytes, byte[] contractBytes) {
-        return Executors.newSingleThreadExecutor().submit(new AuditRunnable(invoiceBytes, contractBytes));
+    @PostConstruct
+    public void init() {
+        try {
+            this.sentenceDetector = loadSentenceModel("opennlp-en-ud-ewt-sentence-1.0-1.9.3.bin");
+            this.dateFinder = loadNameFinderModel("en-ner-time.bin");
+            this.moneyFinder = loadNameFinderModel("en-ner-money.bin");
+            this.percentageFinder = loadNameFinderModel("en-ner-percentage.bin");
+            this.timeFinder = loadNameFinderModel("en-ner-time.bin");
+            this.locationFinder = loadNameFinderModel("en-ner-location.bin");
+            this.personFinder = loadNameFinderModel("en-ner-person.bin");
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to initialize models", e);
+        }
     }
 
-    private class AuditRunnable implements Callable<String> {
+    public String auditInvoiceAgainstContract(byte[] invoiceBytes, byte[] contractBytes) {
+        try {
+            String invoiceText = new String(invoiceBytes, StandardCharsets.UTF_8);
+            String contractText = new String(contractBytes, StandardCharsets.UTF_8);
 
-        private byte[] invoiceBytes;
-        private byte[] contractBytes;
+            String[] sentences = sentenceDetector.sentDetect(invoiceText);
+            StringBuilder reportContent = new StringBuilder();
 
-        public AuditRunnable(byte[] invoiceBytes, byte[] contractBytes) {
-            this.invoiceBytes = invoiceBytes;
-            this.contractBytes = contractBytes;
-        }
-
-        @Override
-        public String call() throws Exception {
-            String invoiceText = new String(invoiceBytes);
-            String contractText = new String(contractBytes);
-
-            // Initialize sentence model and detector
-            InputStream sentenceInputStream = getClass().getResourceAsStream("/en-sent.bin");
-            SentenceModel sentenceModel = new SentenceModel(sentenceInputStream);
-            SentenceDetectorME sentenceDetector = new SentenceDetectorME(sentenceModel);
-
-            String[] invoiceSentences = sentenceDetector.sentDetect(invoiceText);
-            String[] contractSentences = sentenceDetector.sentDetect(contractText);
-
-            NameFinderME dateFinder = loadModel("/en-ner-date.bin");
-            NameFinderME moneyFinder = loadModel("/en-ner-money.bin");
-
-            SimpleTokenizer tokenizer = SimpleTokenizer.INSTANCE;
-
-            Map<String, String> invoiceEntities = new HashMap<>();
-            Map<String, String> contractEntities = new HashMap<>();
-            Map<String, String> anomalies = new HashMap<>();
-
-            processText(invoiceSentences, tokenizer, new NameFinderME[]{dateFinder, moneyFinder}, invoiceEntities);
-            processText(contractSentences, tokenizer, new NameFinderME[]{dateFinder, moneyFinder}, contractEntities);
-
-            checkAnomalies(invoiceEntities, contractEntities, anomalies);
-
-            pdfReport = generatePDFReport(invoiceEntities, contractEntities, anomalies);
-
-            return "Audit completed";
-        }
-
-        private NameFinderME loadModel(String path) throws Exception {
-            InputStream modelInput = getClass().getResourceAsStream(path);
-            TokenNameFinderModel model = new TokenNameFinderModel(modelInput);
-            return new NameFinderME(model);
-        }
-
-        private void processText(String[] sentences, SimpleTokenizer tokenizer, NameFinderME[] finders, Map<String, String> entities) {
             for (String sentence : sentences) {
-                String[] tokens = tokenizer.tokenize(sentence);
-                for (NameFinderME finder : finders) {
-                    Span[] spans = finder.find(tokens);
-                    for (Span span : spans) {
-                        String entity = tokens[span.getStart()];
-                        entities.put(entity, span.getType());
-                    }
+                String[] tokens = SimpleTokenizer.INSTANCE.tokenize(sentence);
+                Span[] dateSpans = dateFinder.find(tokens);
+                reportContent.append("Sentence: ").append(sentence).append("\n");
+                reportContent.append("Found dates: ");
+                for (Span span : dateSpans) {
+                    reportContent.append(tokens[span.getStart()]).append(" ");
                 }
-            }
-        }
-
-        private void checkAnomalies(Map<String, String> invoiceEntities, Map<String, String> contractEntities, Map<String, String> anomalies) {
-            for (String key : invoiceEntities.keySet()) {
-                if (!contractEntities.containsKey(key)) {
-                    anomalies.put(key, "Missing in contract");
-                }
+                reportContent.append("\n");
             }
 
-            for (String key : contractEntities.keySet()) {
-                if (!invoiceEntities.containsKey(key)) {
-                    anomalies.put(key, "Missing in invoice");
-                }
-            }
-        }
-
-        private byte[] generatePDFReport(Map<String, String> invoiceEntities, Map<String, String> contractEntities, Map<String, String> anomalies) throws DocumentException {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            Document document = new Document();
-            PdfWriter.getInstance(document, out);
-            document.open();
-            document.add(new Paragraph("Audit Report"));
-            document.add(new Paragraph("Invoice: " + invoiceEntities));
-            document.add(new Paragraph("Contract: " + contractEntities));
-            document.add(new Paragraph("Anomalies: " + anomalies));
+            ByteArrayOutputStream pdfOutputStream = new ByteArrayOutputStream();
+            PdfDocument pdfDocument = new PdfDocument(new PdfWriter(pdfOutputStream));
+            Document document = new Document(pdfDocument);
+            document.add(new Paragraph(reportContent.toString()));
             document.close();
-            return out.toByteArray();
+
+            pdfReport = pdfOutputStream.toByteArray();
+
+            return "Audit complete. PDF report generated.";
+        } catch (Exception e) {
+            return "Failed to perform the audit: " + e.getMessage();
         }
     }
 
     public byte[] getPDFReport() {
-        return this.pdfReport;
+        return pdfReport;
+    }
+
+    private SentenceDetectorME loadSentenceModel(String path) throws Exception {
+        InputStream modelInput = getClass().getClassLoader().getResourceAsStream(path);
+        SentenceModel sentenceModel = new SentenceModel(modelInput);
+        return new SentenceDetectorME(sentenceModel);
+    }
+
+    private NameFinderME loadNameFinderModel(String path) throws Exception {
+        InputStream modelInput = getClass().getClassLoader().getResourceAsStream(path);
+        TokenNameFinderModel model = new TokenNameFinderModel(modelInput);
+        return new NameFinderME(model);
     }
 }
