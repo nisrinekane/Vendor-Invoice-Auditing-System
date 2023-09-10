@@ -14,34 +14,37 @@
     <label for="contract">Contract:</label>
     <input type="file" name="contract" id="contract" />
     <br>
-    <input type="button" value="Upload Files" onclick="uploadFiles()" />
 </form>
+
+<!-- Removed the Upload button -->
 
 <input type="button" value="Generate Report" onclick="generateReport()" />
 
 <script>
-    async function uploadFiles() {
+    async function generateReport() {
         const formData = new FormData();
         formData.append('invoice', document.getElementById('invoice').files[0]);
         formData.append('contract', document.getElementById('contract').files[0]);
 
-        const response = await fetch('/api/audit/upload', {
+        // Upload the files and perform audit
+        const uploadResponse = await fetch('/api/audit/upload', {
             method: 'POST',
             body: formData
         });
 
-        if(response.ok) {
-            alert('Files uploaded');
+        if(uploadResponse.ok) {
+            // Generate the PDF report
+            const response = await fetch('/api/audit/generatePDF');
+            if(response.ok) {
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                window.open(url, '_blank');
+            } else {
+                alert('Error generating PDF');
+            }
         } else {
             alert('Error uploading files');
         }
-    }
-
-    async function generateReport() {
-        const response = await fetch('/api/audit/generatePDF');
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        window.open(url, '_blank');
     }
 </script>
 
