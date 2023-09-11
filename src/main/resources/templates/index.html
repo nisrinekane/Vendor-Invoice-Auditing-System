@@ -16,29 +16,41 @@
     <br>
 </form>
 
-<!-- Removed the Upload button -->
-
 <input type="button" value="Generate Report" onclick="generateReport()" />
 
 <script>
     async function generateReport() {
         const formData = new FormData();
-        formData.append('invoice', document.getElementById('invoice').files[0]);
-        formData.append('contract', document.getElementById('contract').files[0]);
+        const invoiceFile = document.getElementById('invoice').files[0];
+        const contractFile = document.getElementById('contract').files[0];
+
+        formData.append('invoice', invoiceFile);
+        formData.append('contract', contractFile);
+        formData.append('invoiceExtension', invoiceFile.name.split('.').pop());
+        formData.append('contractExtension', contractFile.name.split('.').pop());
 
         // Upload the files and perform audit
-        const uploadResponse = await fetch('/api/audit/upload', {
+        const uploadResponse = await fetch('/api/upload', {
             method: 'POST',
             body: formData
         });
 
         if(uploadResponse.ok) {
-            // Generate the PDF report
-            const response = await fetch('/api/audit/generatePDF');
+            const uploadResult = await uploadResponse.text();
+            alert(uploadResult); // Show audit result
+
+            // Generate and download the PDF report
+            const response = await fetch('/api/report');
             if(response.ok) {
                 const blob = await response.blob();
                 const url = window.URL.createObjectURL(blob);
-                window.open(url, '_blank');
+                const a = document.createElement("a");
+                a.style.display = "none";
+                a.href = url;
+                a.download = 'audit_report.pdf';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
             } else {
                 alert('Error generating PDF');
             }
