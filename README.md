@@ -4,13 +4,17 @@
 The Invoice Auditing System is a Spring Boot-based application that leverages OpenNLP and Apache POI for auditing invoice documents against contracts. This application provides an easy-to-use interface to upload invoice and contract documents, runs natural language processing algorithms to detect various entities in the documents, and produces a PDF report of the auditing results.
 
 ### Features
-*Upload invoice and contract documents in multiple formats (PDF, DOC, DOCX, TXT).
-*Entity recognition for detecting dates, money amounts, percentages, times, locations, and persons.
-*Generate a detailed PDF report containing the auditing results.
+* Upload invoice and contract documents in multiple formats (PDF, DOC, DOCX, TXT).
+
+* Entity recognition for detecting dates, money amounts, percentages, times, locations, and persons.
+
+* Generate a detailed PDF report containing the auditing results.
 
 ### Requirements
 Java 11+
+
 Maven
+
 Spring Boot 2.5+
 
 ### Getting Started
