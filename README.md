@@ -1,9 +1,34 @@
 ## Automated Vendor Invoice Auditing System 
 
-A system that automates the process of auditing vendor invoices against contract terms to identify discrepancies, overcharges, and potential savings opportunities. 
-This Java project provides an interface for users to upload invoice and contract files and receive instant feedback.
+### Overview
+The Invoice Auditing System is a Spring Boot-based application that leverages OpenNLP and Apache POI for auditing invoice documents against contracts. This application provides an easy-to-use interface to upload invoice and contract documents, runs natural language processing algorithms to detect various entities in the documents, and produces a PDF report of the auditing results.
 
-Features
-* File Upload: Allows users to upload invoices and contracts in PDF, DOCX, and TXT formats.
-* Automated Audit: Scans uploaded invoices and matches them against contract terms, flagging any discrepancies.
-* Instant Feedback: Provides users with an instant audit report, downloadable in text or PDF format.
+### Features
+*Upload invoice and contract documents in multiple formats (PDF, DOC, DOCX, TXT).
+*Entity recognition for detecting dates, money amounts, percentages, times, locations, and persons.
+*Generate a detailed PDF report containing the auditing results.
+
+### Requirements
+Java 11+
+Maven
+Spring Boot 2.5+
+
+### Getting Started
+Clone the Repository
+```
+git clone https://github.com/nisrinekane/Vendor-Invoice-Auditing-System.git
+cd Vendor-Invoice-Auditing-System
+```
+Build the Application
+```
+mvn clean install
+```
+Run the Application
+
+The application will start and be accessible at http://localhost:8080.
+
+### Usage
+Open your web browser and navigate to http://localhost:8080.
+Upload the invoice and contract files.
+Click the "Generate Report" button.
+Download the generated PDF report.
