@@ -1,21 +1,25 @@
 package com.nisrinekane.invoiceauditingsystem.utils;
+
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor;
+import com.itextpdf.kernel.pdf.canvas.parser.listener.SimpleTextExtractionStrategy;
+
+import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.springframework.stereotype.Component;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.text.PDFTextStripper;
-import org.apache.pdfbox.Loader;
-import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.springframework.stereotype.Component;
 
 @Component
 public class FileUtils {
+
     public static String readFileContent(Path path) throws IOException {
         String extension = getFileExtension(path.toString());
-//        use file extension to choose the right method to read the file
         return switch (extension) {
             case "txt" -> readTxtFile(path);
             case "pdf" -> readPdfFile(path);
@@ -24,23 +28,26 @@ public class FileUtils {
         };
     }
 
-//    get file extension from file name
     private static String getFileExtension(String fileName) {
         int dotIndex = fileName.lastIndexOf('.');
         return (dotIndex == -1) ? "" : fileName.substring(dotIndex + 1);
     }
 
-//    read text:
     private static String readTxtFile(Path path) throws IOException {
         return new String(Files.readAllBytes(path));
     }
 
-//    read pdf:
     private static String readPdfFile(Path path) throws IOException {
-        try (PDDocument document = Loader.loadPDF(new File(path.toUri()))) {
-            PDFTextStripper stripper = new PDFTextStripper();
-            return stripper.getText(document);
+        PdfDocument pdfDoc = new PdfDocument(new PdfReader(path.toString()));
+        StringBuilder text = new StringBuilder();
+        int numberOfPages = pdfDoc.getNumberOfPages();
+
+        for (int i = 1; i <= numberOfPages; i++) {
+            text.append(PdfTextExtractor.getTextFromPage(pdfDoc.getPage(i), new SimpleTextExtractionStrategy()));
         }
+
+        pdfDoc.close();
+        return text.toString();
     }
 
     private static String readDocxFile(Path path) throws IOException {

@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-
 @RestController
 @RequestMapping("/api")
 public class AuditController {
@@ -15,11 +14,13 @@ public class AuditController {
 
     @PostMapping("/upload")
     public String uploadFiles(@RequestParam("invoice") MultipartFile invoice,
-                              @RequestParam("contract") MultipartFile contract) {
+                              @RequestParam("contract") MultipartFile contract,
+                              @RequestParam("invoiceExtension") String invoiceExtension,
+                              @RequestParam("contractExtension") String contractExtension) {
         try {
             byte[] invoiceBytes = invoice.getBytes();
             byte[] contractBytes = contract.getBytes();
-            return auditService.auditInvoiceAgainstContract(invoiceBytes, contractBytes);
+            return auditService.auditInvoiceAgainstContract(invoiceBytes, invoiceExtension, contractBytes, contractExtension);
         } catch (Exception e) {
             return "Error occurred: " + e.getMessage();
         }
