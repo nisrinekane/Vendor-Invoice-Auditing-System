@@ -1,9 +1,14 @@
 package com.nisrinekane.invoiceauditingsystem.controllers;
 
+import com.nisrinekane.invoiceauditingsystem.exceptions.ResourceNotFoundException;
 import com.nisrinekane.invoiceauditingsystem.service.AuditService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -22,7 +27,7 @@ public class AuditController {
             byte[] contractBytes = contract.getBytes();
             return auditService.auditInvoiceAgainstContract(invoiceBytes, invoiceExtension, contractBytes, contractExtension);
         } catch (Exception e) {
-            return "Error occurred: " + e.getMessage();
+            throw new ResourceNotFoundException("Error occurred: " + e.getMessage());
         }
     }
 
@@ -30,4 +35,12 @@ public class AuditController {
     public byte[] getAuditReport() {
         return auditService.getPDFReport();
     }
+
+    // Catch-all route to handle unrecognized routes
+    @GetMapping("/**")
+    public void handleAllOtherRoutes() {
+        throw new ResourceNotFoundException("Resource not found");
+    }
+
 }
+
