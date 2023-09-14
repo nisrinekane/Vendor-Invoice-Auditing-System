@@ -1,0 +1,29 @@
+.isometric-layout {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: nowrap;
+    min-height: 80vh;
+    width: 100%;
+}
+
+.isometric-illustration {
+    position: relative;
+    z-index: 1;
+    flex: 4;
+    background: url('https://img.freepik.com/premium-vector/digital-bill-electronic-receipt-invoice-illustration-isometric-online-shopping_106788-1799.jpg?w=1060') no-repeat center;
+    background-size: contain;
+    min-height: 80vh;
+    order: 4;
+    margin-right: 10%;
+}
+
+.isometric-content {
+    order: 1;
+    margin-left: 10%;
+    position: relative;
+    z-index: 1;
+}
+
+
