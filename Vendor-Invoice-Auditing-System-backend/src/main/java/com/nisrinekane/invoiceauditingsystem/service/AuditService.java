@@ -23,6 +23,8 @@ import java.util.regex.Pattern;
 
 @Service
 public class AuditService {
+    @Autowired
+    private FileUtils fileUtils;
 
     private SentenceDetectorME sentenceDetector;
     private byte[] pdfReport;
@@ -40,8 +42,9 @@ public class AuditService {
     }
 
     public String auditInvoiceAgainstContract(byte[] invoiceBytes, String invoiceExtension, byte[] contractBytes, String contractExtension) throws Exception {
-        String invoiceText = readFileContentBasedOnExtension(invoiceBytes, invoiceExtension);
-        String contractText = readFileContentBasedOnExtension(contractBytes, contractExtension);
+
+        String invoiceText = FileUtils.readFileContentBasedOnExtension(invoiceBytes, invoiceExtension);
+        String contractText = FileUtils.readFileContentBasedOnExtension(contractBytes, contractExtension);
 
         StringBuilder reportContent = new StringBuilder();
 
