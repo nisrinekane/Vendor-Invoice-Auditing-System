@@ -18,14 +18,22 @@ import java.nio.file.Path;
 @Component
 public class FileUtils {
 
-    public static String readFileContent(Path path) throws IOException {
-        String extension = getFileExtension(path.toString());
-        return switch (extension) {
-            case "txt" -> readTxtFile(path);
-            case "pdf" -> readPdfFile(path);
-            case "docx" -> readDocxFile(path);
-            default -> throw new UnsupportedOperationException(extension + " File type is not supported.");
-        };
+    public static String readFileContentBasedOnExtension(byte[] fileBytes, String extension) throws IOException {
+        switch (extension.toLowerCase()) {
+            case "txt":
+                return new String(fileBytes, StandardCharsets.UTF_8);
+            case "pdf":
+                PdfDocument pdfDocument = new PdfDocument(new PdfReader(new ByteArrayInputStream(fileBytes)));
+                return PdfTextExtractor.getTextFromPage(pdfDocument.getPage(1));
+            case "doc":
+            case "docx":
+                InputStream is = new ByteArrayInputStream(fileBytes);
+                XWPFDocument doc = new XWPFDocument(is);
+                XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
+                return extractor.getText();
+            default:
+                throw new IllegalArgumentException("Unsupported file extension: " + extension);
+        }
     }
 
     private static String getFileExtension(String fileName) {
