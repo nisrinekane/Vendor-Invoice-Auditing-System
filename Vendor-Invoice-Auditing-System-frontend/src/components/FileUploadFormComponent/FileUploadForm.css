@@ -1,16 +1,35 @@
 .Paper {
-    width: 300px;
-    padding: 3em;
-    background-color: #f0eff6;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    padding: 20px;
+    margin: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    width: 80vh;
+}
+
+.Button {
+    background-color: #1E3A63;
+    font-size: 1em;
+    font-weight: 600;
+    color: white;
+    padding: 10px 20px;
     border: none;
-    margin: 5em;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 10px auto;
+    display: block;
+    width: 100%;
+    text-align: center;
+}
+
+.Button:hover {
+    background-color: #0056b3;
 }
 
 .FormHeader {
     margin-bottom: 3em;
-    color: #373db2;
+    color: #1E3A63;
     text-align: center;
+
 }
 
 .form-controls {
@@ -18,33 +37,27 @@
     justify-content: space-between;
     align-items: center;
     flex-wrap: nowrap;
-}
-
-.form-control {
-    flex: 1;
-    max-width: 45%;
-}
-
-.Button {
-    background-color: #373db2;
-    color: white;
-    padding: 10px;
-    border: none;
-    border-radius: 7px;
-    cursor: pointer;
-    display: block;
-    margin: 2rem auto;
+    font-size: 1em;
+    font-weight: bolder;
 }
 
 .UploadButton {
-    background-color: #c57cd0;
+    background-color: #B0BCC2;
     padding: 5px 10px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    display: inline-block;
+}
+
+.UploadButton:hover {
+    background-color: #D0D6DA;
+}
+
+.Button, .UploadButton {
+    transition: background-color 0.3s, transform 0.2s;
 }
 
 input[type="file"] {
     display: none;
 }
+
