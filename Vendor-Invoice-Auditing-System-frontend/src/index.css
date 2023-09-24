@@ -2,9 +2,9 @@ body, html {
   margin: 0;
   padding: 0;
   font-family: 'Roboto', sans-serif;
-  background-color: #f4f4f4;
-  color: #FFFFFF;
-
+  background-color: #F0F4F8;
+  color: #1E3A63;
+  line-height: 1.6;
 }
 
 .container {
@@ -13,12 +13,20 @@ body, html {
   justify-content: space-around;
   align-items: center;
   min-height: 100vh;
+  background-color: #FFF;
+  padding: 1rem;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
 }
 
 .main-title {
   text-align: left;
-  font-size: 36px;
+  font-size: 2.8em;
   margin-bottom: 30px;
+  margin-top: 30px;
+  margin-left: 35px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 code {

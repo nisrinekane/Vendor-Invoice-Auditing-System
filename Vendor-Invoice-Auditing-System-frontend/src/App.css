@@ -1,41 +1,28 @@
-.container {
-  position: relative;
-  background-color: white;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: space-between;
-  min-height: 100vh;
+html, body {
+  height: 100vh;
+  overflow-y: hidden;
+  margin: 0;
 }
 
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #F4F4F7;
+}
 
 .main-title {
-  z-index: 1;
-  position: relative;
-  margin-left: 25px;
-  margin-top: 20px;
   font-size: 2.5em;
-  color: white;
   font-weight: 700;
+  margin-bottom: 20px;
 }
 
 .content {
   flex-grow: 1;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
 }
-
-.asymmetric-hero {
-  background: url('./banner.svg') no-repeat;
-  background-size: cover;
-  background-position: left top;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-}
-
-
-
-
-
