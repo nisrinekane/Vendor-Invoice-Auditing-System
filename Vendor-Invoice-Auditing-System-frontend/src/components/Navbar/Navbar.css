@@ -10,14 +10,25 @@
     z-index: 1000;
 }
 
-.navbar-logo, .navbar-links {
-    padding: 0 20px;
+.navbar-logo-title {
+    display: flex;
+    align-items: center;
 }
 
 .navbar-logo {
+    width: 30px;
+    margin-right: 10px;
+}
+
+.navbar-title {
     font-size: 1.5em;
     color: #FFFFFF;
     text-decoration: none;
+}
+
+.navbar-links {
+    display: flex;
+    align-items: center;
 }
 
 .navbar-links a {
