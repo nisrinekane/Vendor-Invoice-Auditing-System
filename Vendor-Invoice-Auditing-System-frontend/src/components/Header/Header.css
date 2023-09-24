@@ -1,0 +1,31 @@
+.header {
+    text-align: center;
+    padding: 20px;
+    background-color: #F4F4F7;
+    margin-top: 60px;
+}
+
+.main-title {
+    font-size: 2.5em;
+    color: #1E3A63;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.header-subtitle {
+    color: #333333;
+    margin-bottom: 2rem;
+}
+
+.header-button {
+    background-color: #1E3A63;
+    color: #FFFFFF;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.header-button:hover {
+    background-color: #4C6E91;
+}
