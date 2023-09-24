@@ -1,8 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Footer from './components/FooterComponent/Footer';
-import IsometricLayout from './components/IsometricLayout/IsometricLayout';
-import NotFound from './components/ErrorComponent/NotFound';
+// import IsometricLayout from './components/IsometricLayout/IsometricLayout';
+import FileUploadForm from './components/FileUploadForm/FileUploadForm';
+import NotFound from './components/Error/NotFound';
 import Navbar from './components/Navbar/Navbar';
 import Header from './components/Header/Header';
 import './App.css';
@@ -15,7 +16,7 @@ function App() {
                 <Header />
                 <div className="content">
                     <Routes>
-                        <Route path="/" element={<IsometricLayout />} exact />
+                        <Route path="/" element={<FileUploadForm />} />
                         <Route path="*" element={<NotFound />} />
                     </Routes>
                 </div>

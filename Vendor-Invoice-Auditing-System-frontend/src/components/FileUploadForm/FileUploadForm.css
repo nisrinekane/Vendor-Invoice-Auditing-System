@@ -1,0 +1,63 @@
+.Paper {
+    padding: 40px;
+    margin: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    width: 50vh;
+}
+
+.Button {
+    background-color: #1E3A63;
+    font-size: 1em;
+    font-weight: 600;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 10px auto;
+    display: block;
+    width: 100%;
+    text-align: center;
+}
+
+.Button:hover {
+    background-color: #0056b3;
+}
+
+.FormHeader {
+    margin-bottom: 3em;
+    color: #1E3A63;
+    text-align: center;
+
+}
+
+.form-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: nowrap;
+    font-size: 1em;
+    font-weight: bolder;
+}
+
+.UploadButton {
+    background-color: #B0BCC2;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.UploadButton:hover {
+    background-color: #D0D6DA;
+}
+
+.Button, .UploadButton {
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+input[type="file"] {
+    display: none;
+}
+
