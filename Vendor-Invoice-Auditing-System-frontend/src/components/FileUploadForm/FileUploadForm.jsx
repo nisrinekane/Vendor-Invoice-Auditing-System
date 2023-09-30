@@ -18,6 +18,13 @@ const FileUploadForm = () => {
         formData.append('invoice', invoice);
         formData.append('contract', contract);
 
+        // Extract file extensions and append them to formData
+        const invoiceExtension = invoice?.name.split('.').pop();
+        const contractExtension = contract?.name.split('.').pop();
+
+        formData.append('invoiceExtension', invoiceExtension);
+        formData.append('contractExtension', contractExtension);
+
         try {
             const response = await axios.post('http://localhost:8080/api/upload', formData);
             alert(response.data);
@@ -25,6 +32,7 @@ const FileUploadForm = () => {
             alert('An error occurred: ' + error);
         }
     };
+
 
     return (
         <div className="Paper">
