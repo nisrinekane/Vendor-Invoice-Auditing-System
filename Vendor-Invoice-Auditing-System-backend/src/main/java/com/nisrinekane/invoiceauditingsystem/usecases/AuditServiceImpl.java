@@ -66,8 +66,6 @@ public class AuditServiceImpl implements AuditService {
         }
     }
 
-    // Your auditInvoiceAgainstContract method here...
-
     private String extractEntity(String[] tokens, NameFinderME finder) {
         Span[] spans = finder.find(tokens);
         if (spans.length > 0) {
