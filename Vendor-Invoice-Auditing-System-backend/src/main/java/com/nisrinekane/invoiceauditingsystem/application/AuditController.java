@@ -6,6 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.ResponseEntity;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,8 +36,12 @@ public class AuditController {
     }
 
     @GetMapping("/report")
-    public byte[] getAuditReport() {
-        return auditService.getPDFReport();
+    public ResponseEntity<byte[]> getAuditReport() {
+        byte[] pdfBytes = auditService.getPDFReport();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDisposition(ContentDisposition.builder("inline; filename=report.pdf").build());
+        return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
     }
 
     // Catch-all route to handle unrecognized routes

@@ -17,21 +17,23 @@ const FileUploadForm = () => {
         const formData = new FormData();
         formData.append('invoice', invoice);
         formData.append('contract', contract);
-
-        // Extract file extensions and append them to formData
-        const invoiceExtension = invoice?.name.split('.').pop();
-        const contractExtension = contract?.name.split('.').pop();
-
-        formData.append('invoiceExtension', invoiceExtension);
-        formData.append('contractExtension', contractExtension);
+        formData.append('invoiceExtension', invoice.name.split('.').pop());
+        formData.append('contractExtension', contract.name.split('.').pop());
 
         try {
             const response = await axios.post('http://localhost:8080/api/upload', formData);
             alert(response.data);
+            downloadPDFReport();
         } catch (error) {
             alert('An error occurred: ' + error);
         }
     };
+
+
+    const downloadPDFReport = () => {
+        window.open('http://localhost:8080/api/report', '_blank');
+    }
+
 
 
     return (
